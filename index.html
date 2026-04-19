@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elan Boutique | Gestão de Vendas Premium</title>
+    <meta name="description" content="Sistema exclusivo de gestão de vendas para a Elan Boutique.">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons (via CDN for simplicity and beauty) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for reports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-img-wrapper">
+                    <img src="logo_elan_botique.jpg" alt="EB" id="storeLogo"
+                        onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+                    <div id="logoFallback" class="logo-icon" style="display: none;">EB</div>
+                </div>
+                <span>Elan Boutique</span>
+            </div>
+            <nav>
+                <div class="nav-item active" data-section="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-section="vendas">
+                    <i data-lucide="shopping-bag"></i>
+                    <span>Vendas</span>
+                </div>
+                <div class="nav-item" data-section="estoque">
+                    <i data-lucide="package"></i>
+                    <span>Estoque</span>
+                </div>
+                <div class="nav-item" data-section="relatorios">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>Relatórios</span>
+                </div>
+                <div class="nav-item" data-section="retiradas">
+                    <i data-lucide="banknote"></i>
+                    <span>Retiradas</span>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">AD</div>
+                    <div class="user-info">
+                        <p class="name">Admin</p>
+                        <p class="role">Gerente</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Universal Hero -->
+            <div class="hero-banner">
+                <div class="hero-overlay">
+                    <span id="currentDate" class="hero-date"></span>
+                    <h1 id="pageTitle">Bem-vindo à Elan Boutique</h1>
+                    <p id="pageDescription">Controle suas vendas com sofisticação e precisão.</p>
+                </div>
+            </div>
+
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="globalSearch" placeholder="Buscar...">
+                </div>
+                <div class="actions">
+                    <button id="addSaleBtn" class="btn btn-primary">
+                        <i data-lucide="plus"></i>
+                        Nova Venda
+                    </button>
+                    <button id="addStockBtn" class="btn btn-secondary" style="display: none;">
+                        <i data-lucide="package"></i>
+                        Novo Estoque
+                    </button>
+                    <button id="addWithdrawalBtn" class="btn btn-danger" style="display: none;">
+                        <i data-lucide="minus-circle"></i>
+                        Nova Retirada
+                    </button>
+                </div>
+            </header>
+
+            <!-- SECTIONS -->
+
+            <!-- Dashboard Section -->
+            <div id="section-dashboard" class="content-section active">
+                <section class="stats-grid">
+                    <div class="stat-card revenue">
+                        <div class="stat-info">
+                            <p class="stat-label">Total de Vendas</p>
+                            <h2 id="totalRevenue">R$ 0,00</h2>
+                            <span class="trend positive"><i data-lucide="trending-up"></i> +12%</span>
+                        </div>
+                        <div class="stat-icon"><i data-lucide="dollar-sign"></i></div>
+                    </div>
+                    <div class="stat-card sales-count">
+                        <div class="stat-info">
+                            <p class="stat-label">Itens Vendidos</p>
+                            <h2 id="totalItems">0</h2>
+                        </div>
+                        <div class="stat-icon"><i data-lucide="shopping-cart"></i></div>
+                    </div>
+                    <div class="stat-card avg-ticket">
+                        <div class="stat-info">
+                            <p class="stat-label">Ticket Médio</p>
+                            <h2 id="avgTicket">R$ 0,00</h2>
+                        </div>
+                        <div class="stat-icon"><i data-lucide="tag"></i></div>
+                    </div>
+                    <div class="stat-card net-cash">
+                        <div class="stat-info">
+                            <p class="stat-label">Saldo em Caixa</p>
+                            <h2 id="netCash">R$ 0,00</h2>
+                        </div>
+                        <div class="stat-icon"><i data-lucide="wallet"></i></div>
+                    </div>
+                </section>
+
+                <div class="content-grid">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Resumo de Vendas</h3>
+                            <div class="filters">
+                                <select id="categoryFilter">
+                                    <option value="all">Todas Categorias</option>
+                                    <option value="Camisetas">Camisetas</option>
+                                    <option value="Calças">Calças</option>
+                                    <option value="Vestidos">Vestidos</option>
+                                    <option value="Acessórios">Acessórios</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="salesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Produto</th>
+                                        <th>Categoria</th>
+                                        <th>Qtd</th>
+                                        <th>Pagamento</th>
+                                        <th>Total</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendas Section (Specific/Full View) -->
+            <div id="section-vendas" class="content-section">
+                <!-- Similar to summary but could have more info -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Histórico Completo de Vendas</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="fullSalesTable">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Qtd</th>
+                                    <th>Valor</th>
+                                    <th>Pagamento</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fullSalesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estoque Section -->
+            <div id="section-estoque" class="content-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="stat-label">Total de Itens em Estoque</p>
+                            <h2 id="stockTotalItems">0</h2>
+                        </div>
+                        <div class="stat-icon"><i data-lucide="layers"></i></div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Gerenciamento de Inventário</h3>
+                        <div class="actions">
+                             <button id="manageCategoriesBtn" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 6px 12px;">
+                                <i data-lucide="settings"></i> Categorias
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Marca</th>
+                                    <th>Categoria</th>
+                                    <th>Qtd</th>
+                                    <th>Status</th>
+                                    <th>Preço</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-relatorios" class="content-section">
+                <!-- Financial Summary Card -->
+                <div class="stat-card" style="margin-bottom: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start;">
+                    <div style="padding: 10px; border-right: 1px solid var(--border);">
+                        <p class="stat-label">Faturamento (Vendas)</p>
+                        <h2 id="reportRevenue" style="color: var(--success); font-size: 1.5rem;">R$ 0,00</h2>
+                    </div>
+                    <div style="padding: 10px; border-right: 1px solid var(--border);">
+                        <p class="stat-label">Retiradas (Sangrias)</p>
+                        <h2 id="reportWithdrawals" style="color: var(--danger); font-size: 1.5rem;">R$ 0,00</h2>
+                    </div>
+                    <div style="padding: 10px;">
+                        <p class="stat-label">Lucro Líquido</p>
+                        <h2 id="reportProfit" style="color: var(--primary); font-size: 2rem; font-weight: 800;">R$ 0,00</h2>
+                    </div>
+                </div>
+
+                <div class="report-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                    <div class="stat-card" style="height: auto; flex-direction: column; align-items: stretch;">
+                        <div class="stat-info">
+                            <h3>Produtos Mais Vendidos</h3>
+                            <div style="height: 300px; margin-top: 20px;">
+                                <canvas id="productsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="height: auto; flex-direction: column; align-items: stretch;">
+                        <div class="stat-info">
+                            <h3>Faturamento por Categoria</h3>
+                            <div style="height: 300px; margin-top: 20px;">
+                                <canvas id="categoriesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="margin-top: 32px;">
+                    <div class="table-header">
+                        <h3>DRE Simplificado (Demonstrativo de Resultados)</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="dre-table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>(+) RECEITA OPERACIONAL BRUTA</strong></td>
+                                    <td id="dreGrossRevenue" style="text-align: right; font-weight: 700;">R$ 0,00</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding-left: 30px; color: var(--text-muted);">Vendas de Produtos</td>
+                                    <td id="dreSalesItems" style="text-align: right; color: var(--text-muted);">R$ 0,00</td>
+                                </tr>
+                                <tr style="border-top: 2px solid var(--border);">
+                                    <td><strong>(-) DESPESAS OPERACIONAIS (RETIRADAS)</strong></td>
+                                    <td id="dreTotalWithdrawals" style="text-align: right; font-weight: 700; color: var(--danger);">- R$ 0,00</td>
+                                </tr>
+                                <tr id="dreWithdrawalDetails">
+                                    <!-- Dynamic Details -->
+                                </tr>
+                                <tr style="background-color: var(--primary-light); border-top: 2px solid var(--primary);">
+                                    <td style="font-size: 1.1rem;"><strong>(=) RESULTADO LÍQUIDO DO PERÍODO</strong></td>
+                                    <td id="dreNetProfit" style="text-align: right; font-size: 1.2rem; font-weight: 800; color: var(--primary-dark);">R$ 0,00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retiradas Section (Full View) -->
+            <div id="section-retiradas" class="content-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Histórico Completo de Retiradas</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Motivo / Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawalBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Sale Modal -->
+    <div id="saleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registrar Nova Venda</h2>
+                <button class="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div id="saleForm">
+                <div class="form-group">
+                    <label for="productName">Nome do Produto</label>
+                    <input type="text" id="productName" required placeholder="Ex: Vestido Elan Seda">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productCategory">Categoria</label>
+                        <select id="productCategory" class="category-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="saleDate">Data</label>
+                        <input type="date" id="saleDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Preço Unitário (R$)</label>
+                        <input type="number" id="productPrice" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="productQty">Quantidade</label>
+                        <input type="number" id="productQty" min="1" required value="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="productPayment">Forma de Pagamento</label>
+                    <select id="productPayment" required>
+                        <option value="Pix">Pix</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="Cartão de Débito">Cartão de Débito</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
+                </div>
+                <!-- Dynamic Change Section -->
+                <div id="changeSection"
+                    style="display: none; background: #f1f5f9; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="amountReceived">Valor Recebido (R$)</label>
+                            <input type="number" id="amountReceived" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Troco a Devolver</label>
+                            <div id="changeValueDisplay"
+                                style="font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-top: 8px;">R$
+                                0,00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="button" id="submitSaleBtn" class="btn btn-primary">Salvar Venda</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Stock Modal -->
+    <div id="stockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar ao Estoque</h2>
+                <button class="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div id="stockForm">
+                <div class="form-group">
+                    <label for="stockName">Nome do Produto</label>
+                    <input type="text" id="stockName" required placeholder="Ex: Vestido de Seda Rosso">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stockCategory">Categoria</label>
+                        <select id="stockCategory" class="category-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stockQty">Quantidade</label>
+                        <input type="number" id="stockQty" min="1" required value="10">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stockBrand">Marca</label>
+                        <input type="text" id="stockBrand" placeholder="Ex: Gucci, Zara, etc.">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="stockTarget">Preço de Venda (R$)</label>
+                        <input type="number" id="stockTarget" step="0.01" required placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="button" id="submitStockBtn" class="btn btn-primary">Salvar no Estoque</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Management Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gerenciar Categorias</h2>
+                <button class="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="form-group">
+                <label for="newCategoryName">Adicionar Nova Categoria</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="newCategoryName" placeholder="Ex: Bolsas">
+                    <button type="button" id="submitCategoryBtn" class="btn btn-primary"><i data-lucide="plus"></i></button>
+                </div>
+            </div>
+            <div class="category-list-container" style="margin-top: 24px;">
+                <label>Categorias Atuais</label>
+                <ul id="categoryList" style="list-style: none; margin-top: 12px; max-height: 200px; overflow-y: auto; padding: 0;"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Withdrawal Modal -->
+    <div id="withdrawalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registrar Retirada de Caixa</h2>
+                <button class="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div id="withdrawalForm">
+                <div class="form-group">
+                    <label for="withdrawalReason">Motivo / Descrição</label>
+                    <input type="text" id="withdrawalReason" required placeholder="Ex: Pagamento Fornecedor, Lanche, etc.">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="withdrawalDate">Data</label>
+                        <input type="date" id="withdrawalDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="withdrawalAmount">Valor (R$)</label>
+                        <input type="number" id="withdrawalAmount" step="0.01" required placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="button" id="submitWithdrawalBtn" class="btn btn-danger">Confirmar Retirada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
